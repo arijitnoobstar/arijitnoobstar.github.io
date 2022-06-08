@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <title>VoE Dataset</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <style type="text/css">
+  	
+  img.avoe {
+  height: 80%;
+  width: 80%;
+  }
+  </style>
+
+</head>
+<body>
+
+<div class="jumbotron jumbotron-fluid bg-dark">
+  <div class="container text-center">
+    <h1 style="color:white;margin-bottom:0;">VoE Dataset:</h1>
+    <h3 style="color:white;margin-top:0;">A Benchmark for Modeling Violation-of-Expectation in Physical Reasoning Across Event Categories
+</h3>
+    <p style="color:white"><a href="https://www.linkedin.com/in/arijitdasgupta97/">Arijit Dasgupta</a><sup>1</sup>, <a href="https://duanjiafei.com/">Duan Jiafei</a><sup>2</sup>, 
+      <a href="https://cde.nus.edu.sg/me/staff/ang-jr-marcelo-h/">Marcelo Ang</a><sup>1</sup>, <a href="https://www.labdevelopingmind.com/team">Yi Lin</a><sup>3</sup>
+      <a href="https://psychology.ucsc.edu/faculty/index.php?uid=suhua">Su-hua Wang</a><sup>4</sup>, <a href="https://psychology.illinois.edu/directory/profile/rbaillar">Renée Bailalrgeon</a><sup>5</sup>, <a href="https://scholar.google.com.sg/citations?user=Up0UYEYAAAAJ&hl=en">Cheston Tan</a><sup>2</sup>
+      <br><sup>1</sup>NUS, <sup>2</sup>A*STAR, <sup>3</sup>NYU, <sup>4</sup>UCSD, <sup>5</sup>UIUC, </p>
+  </div>
+</div>
+
+
+
+<div style="margin-right:10%;margin-left:10%">
+
+	<center>
+	<img class="avoe" src="../images/avoe_diagram.png" class="img-fluid" alt="Responsive image">
+	</center> 
+	<br>
+
+	<h2 style="text-align:center">Abstract</h2>
+	<p>Recent work in computer vision and cognitive reasoning has given rise to an increasing adoption of the Violation-of-Expectation (VoE) paradigm in synthetic datasets. Inspired by infant psychology, researchers are now evaluating a model’s ability to label scenes as either expected or surprising with knowledge of only expected scenes. However, existing VoE-based 3D datasets in physical reasoning provide mainly vision data with little to no heuristics or inductive biases. Cognitive models of physical reasoning reveal infants create high-level abstract representations of objects and interactions. Capitalizing on this knowledge, we established a benchmark to study physical reasoning by curating a novel large-scale synthetic 3D VoE dataset armed with ground-truth heuristic labels of causally relevant features and rules. To validate our dataset in five event categories of physical reasoning, we benchmarked and analyzed human performance. We also proposed the Object File Physical Reasoning Network (OFPR-Net) which exploits the dataset's novel heuristics to outperform our baseline and ablation models. The OFPR-Net is also flexible in learning an alternate physical reality, showcasing its ability to learn universal causal relationships in physical reasoning to create systems with better interpretability.</p>
+
+
+	<h1 style="text-align:center;color:black"><b><u>VoE Dataset</u></b></h1>
+
+	<h2 style="text-align:center"><i>Download the dataset used for experimentation, along with the annotations from <a style="color:red" href="https://drive.google.com/drive/folders/1cUzuR-lhfOgXUz6zhNIIAYqj4mLu7qCN?usp=sharing" >here</a></i></h2>
+
+	<h2 id="datasetstructure">Dataset Structure</h2>
+
+	<p>The dataset consists of five violations of expectation event categories:
+	A. Support
+	B. Occulsion
+	C. Containment
+	D. Collision
+	E. Barrier</p>
+
+	<p>There are 500 trials in each event category (75% Train, 15% Val, 10% Test). The <code>train</code> folder contains only expected videos while the <code>validation</code> and <code>test</code> folders contain both expected and surprising videos. Surprising and expected videos with the same stimuli have the same trial ID.</p>
+
+	<p>Each trial folder has an <code>rgb.avi</code> which is the RGB video. The folder also has a <code>physical_data.json</code> which contains the ground truth values of features, prior rules and posterior rules. There is also a <code>scene_data.json</code> which has frame-by-frame values of the position and rotation of all entities (object, occluder, barrier, support, container) along with the instance IDs of all entities.</p>
+
+	<p>Download <a style="color:red" href="../files/utils.py">utils.py</a> to generate frames and videos of the depth and instance segmented images from <code>depth_raw.npz</code> and <code>inst_raw.npz</code> located in every trial folder. Do edit the settings section of <code>utils.py</code> to your needs. If you need the complete version of the dataset (instead of what was used for experimentation), you may refer to the code below to generate via Blender</p>
+
+	<h3 id="datasetgenerationsystemrequirements">Dataset Generation System Requirements</h3>
+
+	<ul>
+	<li><strong>Blender 2.83 with Eevee engine</strong></li>
+
+	<li><strong>Python 3.6</strong></li>
+	</ul>
+
+	<!-- next part -->
+
+	<h1 style="text-align:center;color:black" id="voedatasetgenerationandmodels"><b><u>Code for Dataset Generation & Model Experimentation</u></b></h1>
+	<h2 style="text-align:center"><i>The code repository can be found <a href="https://github.com/arijitnoobstar/voe_physical_reasoning" style="color:red">here</a></i></h2>
+	<h2 id="datasetgeneration">Dataset Generation</h2>
+	<p>The dataset must be generated in blender's python API for version <code>2.93.1</code>. The generation uses the bpycv library for generation. The python environment requirements can be found in <code>dataset_generation/requirements.txt</code>. The variations are fixed for this dataset and are specified in the CSV files. </p>
+	<h2 id="models">Models</h2>
+	<p>To train the model with the data, set up the <code>models/setup.yaml</code> file and run <code>python models/main.py</code> using the environment from <code>models/requirements.txt</code>. Note that <code>resnet3d_direct</code> refers to the baseline model. You must set the <code>ABSOLUTE_DATA_PATH</code>  to the absolute path to the data. An instance of the config can be seen as such:</p>
+	<pre><code>###############################################
+	# training and testing related configurations #
+	###############################################
+
+	TRAIN: true
+	TEST: true
+
+	TRAINING:
+	  # options: "A", "B", "C", "D", "E"
+	  EVENT_CATEGORY: "A"
+	  # options: "resnet3d_direct", "random", "OF_PR", "Ablation"
+	  MODEL_TYPE: "random"
+	  # path to save experiment data *relative to main.py*
+	  RELATIVE_SAVE_PATH: "experiments/"
+	  # path to save dataset objects for quick loading and retrieval *relative to main.py*
+	  RELATIVE_DATASET_PATH: "datasets/"
+	  # path to AVoE Dataset (with the 5 folders for each event category)
+	  ABSOLUTE_DATA_PATH: ''
+	  # path to state_dict of model to load (best_model.pth) *relative to main.py*
+	  RELATIVE_LOAD_MODEL_PATH: null
+	  # type of decision tree. Options: "normal", "direct", "combined"
+	  DECISION_TREE_TYPE: "combined"
+	  # to use oracle model for observed outcome
+	  SEMI_ORACLE: true
+	  # to use gpu or not to
+	  USE_GPU: true
+	  # learning rate for training
+	  LEARNING_RATE: 0.001
+	  # number of epochs
+	  NUM_EPOCHS: 10
+	  # batch size for training
+	  BATCH_SIZE: 16
+	  # to use pretrained wights for transfer learning
+	  USE_PRETRAINED: true
+	  # whether to freeze pretrained weights
+	  FREEZE_PRETRAINED_WEIGHTS: true
+	  # set the random seed
+	  RANDOM_SEED: 1
+	  # optimizer type. Options: ['adam', 'sgd']
+	  OPTIMIZER_TYPE: "adam"
+	  # dataset efficiency (cpu) Options: ['time', 'memory'] time loads entire dataset into CPU
+	  DATASET_EFFICIENCY: 'time'
+
+	TESTING:
+	  # options: "A", "B", "C", "D", "E", "combined"
+	  EXPERIMENT_ID: null
+	  # path to save experiment data *relative to main.py*
+	  RELATIVE_SAVE_PATH: "experiments/"
+	  # path to save dataset objects for quick loading and retrieval *relative to main.py*
+	  RELATIVE_DATASET_PATH: "datasets/"
+	  # path to AVoE Dataset (with the 5 folders for each event category)
+	  ABSOLUTE_DATA_PATH: ''
+	  # type of decision tree. Options: "normal", "direct", "combined"
+	  DECISION_TREE_TYPE: "combined"
+	  # to use oracle model for observed outcome
+	  SEMI_ORACLE: true
+	  # to use gpu or not to
+	  USE_GPU: true
+	  # dataset efficiency (cpu) Options: ['time', 'memory'] time loads entire dataset into CPU
+	  DATASET_EFFICIENCY: 'time'
+	</code></pre>
+
+	<h2 style="text-align:center">Acknowledgements</h2>
+	<p>This research is supported by the Agency for Science, Technology and Research (A*STAR), Singapore
+	331 under its AME Programmatic Funding Scheme (Award #A18A2b0046). We would also like to thank
+	332 the National University of Singapore for the computational resources used in this work.</p>
+
+</div>
+
+
+
+</body></html>
+
